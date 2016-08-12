@@ -238,7 +238,6 @@
     "subnetPrefix":"[parameters('subnetPrefix')]",
     "scriptsUri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/master/cloudera-on-centos",
     "share-resourcesUri": "[concat(variables('scriptsUri'), '/shared-resources-existing-vnet.json')]",
-    "data-nodeUri":"[concat(variables('scriptsUri'), '/data-node.json')]",
     "sa": "[parameters('masterNodeIPAddress')]",
     "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
     "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
@@ -367,7 +366,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('data-nodeUri')]",
+          "uri": "[concat(variables('scriptsUri'), '/data-node.json')]",
           "contentVersion": "1.0.0.1"
         },
         "parameters": {
