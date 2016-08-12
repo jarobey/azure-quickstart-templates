@@ -13,6 +13,12 @@
     },
     "dataNodeASName": {
       "type": "string"
+    },
+    "gwNodeASName": {
+      "type": "string"
+    },
+    "secNodeASName": {
+      "type": "string"
     }
   },
   "variables": {},
