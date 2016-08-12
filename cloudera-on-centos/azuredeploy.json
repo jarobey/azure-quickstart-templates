@@ -54,17 +54,6 @@
         "description": "The name of the virtual network provisioned for the deployment"
       }
     },
-    "vnetNewOrExisting" : {
-      "type" : "string",
-      "defaultValue": "new",
-      "allowedValues": [
-        "new",
-        "existing"
-      ],
-      "metadata": {
-        "description": "Indicator for new or exiting Virtual Network"
-      }
-    },
     "virtualNetworkRGName": {
       "type": "string",
       "defaultValue": "",
@@ -107,25 +96,53 @@
         "description": "IP address from the master node, for example if the first master is 10.1.1.1, then the first dataNode would be 10.1.1.11"
       }
     },
-    "tshirtSize": {
-      "type": "string",
-      "defaultValue": "Eval",
-      "allowedValues": [
-        "Eval",
-        "Prod"
-      ],
-      "metadata": {
-        "description": "T-shirt size of the Cloudera cluster (Eval, Prod)"
-      }
-    },
     "numberOfDataNodes": {
       "type": "int",
-      "defaultValue": 3,
+      "defaultValue": 6,
       "metadata": {
-        "description": "Number of data nodes for Prod (defaults to 3)"
+        "description": "Number of data nodes (defaults to 6)"
       }
     },
-    "vmSize": {
+    "numberOfGwNodes": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of gateway nodes (defaults to 2)"
+      }
+    },
+    "numberOfSecNodes": {
+      "type": "int",
+      "defaultValue": 4,
+      "metadata": {
+        "description": "Number of security nodes (defaults to 4)"
+      }
+    },
+    "masterVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS14",
+      "metadata": {
+        "description": "The size of the VMs deployed as Master in the cluster (defaults to Standard_DS14).  Only DS14 and DS13 are supported.  To use other options, update cmxDeployOnIbiza.py to add parameter values for the new vm size."
+      },
+      "allowedValues": [
+        "Standard_DS14",
+        "Standard_DS14"
+      ]
+    },
+    "dataVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS14",
+      "metadata": {
+        "description": "The size of the VMs deployed in the cluster (defaults to Standard_DS14)"
+      }
+    },
+    "gwVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS14",
+      "metadata": {
+        "description": "The size of the VMs deployed in the cluster (defaults to Standard_DS14)"
+      }
+    },
+    "secVmSize": {
       "type": "string",
       "defaultValue": "Standard_DS14",
       "metadata": {
@@ -220,8 +237,8 @@
     "addressPrefix":"[parameters('addressPrefix')]",
     "subnetPrefix":"[parameters('subnetPrefix')]",
     "scriptsUri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/master/cloudera-on-centos",
-    "share-resourcesUri": "[concat(variables('scriptsUri'), '/shared-resources-', parameters('vnetNewOrExisting'), '-vnet.json')]",
-    "data-nodeUri":"[concat(variables('scriptsUri'), '/data-node-', toLower(subString(parameters('vmSize'), 9, 4)), '.json')]",
+    "share-resourcesUri": "[concat(variables('scriptsUri'), '/shared-resources-existing-vnet.json')]",
+    "data-nodeUri":"[concat(variables('scriptsUri'), '/data-node.json')]",
     "sa": "[parameters('masterNodeIPAddress')]",
     "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
     "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
@@ -231,23 +248,21 @@
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
     },
-    "clusterTshirtSizeEval": {
-      "masterNodeCount": 1,
-      "dataNodeCount": "[parameters('numberOfDataNodes')]",
-      "highAvailability": "false"
-    },
-    "clusterTshirtSizeProd": {
-      "masterNodeCount": 3,
-      "dataNodeCount": "[parameters('numberOfDataNodes')]",
-      "highAvailability": "true"
-    },
-    "clusterSpec": "[variables(concat('clusterTshirtSize', parameters('tshirtSize')))]",
+    "dataNodeCount": "[parameters('numberOfDataNodes')]",
+    "highAvailability": "true",
+    "masterNodeCount": 3,
+    "clusterSpec": "Prod",
     "vmSpec": {
-      "vmSize": "[parameters('vmSize')]",
+      "masterVmSize": "[parameters('masterVmSize')]",
+      "dataVmSize": "[parameters('dataVmSize')]",
+      "gwVmSize": "[parameters('gwVmSize')]",
+      "secVmSize": "[parameters('secVmSize')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
       "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
-      "dataNodeASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]"
+      "dataNodeASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]",
+      "gwNodeASName": "[concat(parameters('dnsNamePrefix'), '-gwAS')]",
+      "secNodeASName": "[concat(parameters('dnsNamePrefix'), '-secAS')]"
     },
     "networkSpec": {
       "addressPrefix": "[variables('addressPrefix')]",
@@ -260,12 +275,10 @@
       "workerIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('datanodeIpOctet3'), 255)), '.', mod(variables('datanodeIpOctet3'), 255))]",
       "virtualNetworkName": "[parameters('virtualNetworkName')]",
       "virtualNetworkRGName":"[parameters('virtualNetworkRGName')]",
-      "vnetNewOrExisting": "[parameters('vnetNewOrExisting')]",
+      "vnetNewOrExisting": "existing",
       "virtualNetworkSubnetName": "[parameters('subnetName')]"
     },
-    "newVNetId":"[resourceId(concat('Microsoft.Network','/','virtualNetworks'),parameters('virtualNetworkName'))]",
-    "existingVNetId":"[resourceId(parameters('virtualNetworkRGName'),concat('Microsoft.Network','/','virtualNetworks'),parameters('virtualNetworkName'))]",
-    "VNetId": "[variables(concat(parameters('vnetNewOrExisting'),'VNetId'))]"
+    "VNetId": "[resourceId(parameters('virtualNetworkRGName'),concat('Microsoft.Network','/','virtualNetworks'),parameters('virtualNetworkName'))]"
   },
   "resources": [
     {
@@ -290,6 +303,12 @@
           },
           "dataNodeASName": {
             "value": "[variables('vmSpec').dataNodeASName]"
+          },
+          "gwNodeASName": {
+            "value": "[variables('vmSpec').gwNodeASName]"
+          },
+          "secNodeASName": {
+            "value": "[variables('vmSpec').secNodeASName]"
           }
         }
       }

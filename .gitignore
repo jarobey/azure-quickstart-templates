@@ -22,3 +22,4 @@ emacs-config.el
 .vscode/settings.json
 
 /.project
+/.pydevproject

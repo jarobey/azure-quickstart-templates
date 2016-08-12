@@ -248,7 +248,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('vmSpec').dataNodeASName)]"
         },
         "hardwareProfile": {
-          "vmSize": "[parameters('vmSpec').vmSize]"
+          "vmSize": "[parameters('vmSpec').dataVmSize]"
         },
         "osProfile": {
           "computerName": "[reference(concat(variables('publicIPAddressName'), copyIndex())).dnsSettings.fqdn]",
@@ -325,6 +325,24 @@
               "lun": 5,
               "vhd": {
                 "Uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds5/', variables('vmName'), '-datadisk5.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk6",
+              "diskSizeGB": "1023",
+              "lun": 6,
+              "vhd": {
+                "Uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds6/', variables('vmName'), '-datadisk6.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk7",
+              "diskSizeGB": "1023",
+              "lun": 7,
+              "vhd": {
+                "Uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds7/', variables('vmName'), '-datadisk7.vhd')]"
               },
               "createOption": "Empty"
             }

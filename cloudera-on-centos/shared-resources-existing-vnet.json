@@ -33,6 +33,20 @@
     },
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[parameters('gwNodeASName')]",
+      "location": "[resourceGroup().location]",
+      "properties": { }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[parameters('secNodeASName')]",
+      "location": "[resourceGroup().location]",
+      "properties": { }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[concat(parameters('networkSpec').virtualNetworkName, '-sg')]",
       "location": "[resourceGroup().location]",
