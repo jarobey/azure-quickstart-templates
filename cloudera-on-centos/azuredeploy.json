@@ -247,10 +247,13 @@
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
     },
-    "dataNodeCount": "[parameters('numberOfDataNodes')]",
-    "highAvailability": "true",
-    "masterNodeCount": 3,
-    "clusterSpec": "Prod",
+    "clusterSpec": {
+    	"dataNodeCount": "[parameters('numberOfDataNodes')]",
+    	"highAvailability": "true",
+    	"masterNodeCount": 3,
+    	"gwNodeCount": "[parameters('numberOfGwNodes')]",
+    	"secNodeCount": "[parameters('numberOfSecNodes')]"
+    },
     "vmSpec": {
       "masterVmSize": "[parameters('masterVmSize')]",
       "dataVmSize": "[parameters('dataVmSize')]",
