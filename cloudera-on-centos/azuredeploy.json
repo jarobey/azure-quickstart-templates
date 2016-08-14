@@ -243,8 +243,8 @@
     "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
     "ipOctet3": "[int(split(variables('sa'), '.')[3])]",
     "datanodeIpOctet3":"[add(add(int(variables('ipOctet3')), 3), parameters('ipOffsetFromLastIP'))]",
-    "gwnodeIpOctet3":"[add(add(int(variables('datanodeIpOctet3')), parameters('dataNodeCount')), parameters('ipOffsetFromLastIP'))]",
-    "secnodeIpOctet3":"[add(add(int(variables('gwnodeIpOctet3')), parameters('dataNodeCount')), parameters('ipOffsetFromLastIP'))]",
+    "gwnodeIpOctet3":"[add(add(int(variables('datanodeIpOctet3')), parameters('numberOfDataNodes')), parameters('ipOffsetFromLastIP'))]",
+    "secnodeIpOctet3":"[add(add(int(variables('gwnodeIpOctet3')), parameters('numberOfGwNodes')), parameters('ipOffsetFromLastIP'))]",
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
