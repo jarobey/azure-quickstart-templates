@@ -89,7 +89,7 @@
         "description": "IP address for the first master"
       }
     },
-    "ipOffSetFromLastIP": {
+    "ipOffsetFromLastIP": {
       "type": "int",
       "defaultValue": 2,
       "metadata": {
@@ -242,9 +242,9 @@
     "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
     "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
     "ipOctet3": "[int(split(variables('sa'), '.')[3])]",
-    "datanodeIpOctet3":"[add(add(int(variables('ipOctet3)), 3), parameters('ipOffSetFromLastIP'))]",
-    "gwnodeIpOctet3":"[add(add(int(variables('datanodeIpOctet3)), parameters('dataNodeCount')), parameters('ipOffSetFromLastIP'))]",
-    "secnodeIpOctet3":"[add(add(int(variables('gwnodeIpOctet3)), parameters('dataNodeCount')), parameters('ipOffSetFromLastIP'))]",
+    "datanodeIpOctet3":"[add(add(int(variables('ipOctet3')), 3), parameters('ipOffsetFromLastIP'))]",
+    "gwnodeIpOctet3":"[add(add(int(variables('datanodeIpOctet3')), parameters('dataNodeCount')), parameters('ipOffsetFromLastIP'))]",
+    "secnodeIpOctet3":"[add(add(int(variables('gwnodeIpOctet3')), parameters('dataNodeCount')), parameters('ipOffsetFromLastIP'))]",
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
