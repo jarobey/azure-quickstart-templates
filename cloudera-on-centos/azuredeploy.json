@@ -89,23 +89,9 @@
         "description": "IP address for the first master"
       }
     },
-    "dataNodeIPOffSetFromMaster": {
+    "ipOffSetFromLastIP": {
       "type": "int",
-      "defaultValue": 5,
-      "metadata": {
-        "description": "IP address from the master node, for example if the first master is 10.1.1.1, then the first dataNode would be 10.1.1.11"
-      }
-    },
-    "gwNodeIPOffSetFromMaster": {
-      "type": "int",
-      "defaultValue": 14,
-      "metadata": {
-        "description": "IP address from the master node, for example if the first master is 10.1.1.1, then the first dataNode would be 10.1.1.11"
-      }
-    },
-    "secNodeIPOffSetFromMaster": {
-      "type": "int",
-      "defaultValue": 18,
+      "defaultValue": 2,
       "metadata": {
         "description": "IP address from the master node, for example if the first master is 10.1.1.1, then the first dataNode would be 10.1.1.11"
       }
@@ -256,9 +242,9 @@
     "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
     "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
     "ipOctet3": "[int(split(variables('sa'), '.')[3])]",
-    "datanodeIpOctet3":"[add(int(split(variables('sa'), '.')[3]), parameters('dataNodeIPOffSetFromMaster'))]",
-    "gwnodeIpOctet3":"[add(int(split(variables('sa'), '.')[3]), parameters('gwNodeIPOffSetFromMaster'))]",
-    "secnodeIpOctet3":"[add(int(split(variables('sa'), '.')[3]), parameters('secNodeIPOffSetFromMaster'))]",
+    "datanodeIpOctet3":"[add(add(int(variables('ipOctet3)), 3), parameters('ipOffSetFromLastIP'))]",
+    "gwnodeIpOctet3":"[add(add(int(variables('datanodeIpOctet3)), parameters('dataNodeCount')), parameters('ipOffSetFromLastIP'))]",
+    "secnodeIpOctet3":"[add(add(int(variables('gwnodeIpOctet3)), parameters('dataNodeCount')), parameters('ipOffSetFromLastIP'))]",
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
