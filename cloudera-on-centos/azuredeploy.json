@@ -96,6 +96,20 @@
         "description": "IP address from the master node, for example if the first master is 10.1.1.1, then the first dataNode would be 10.1.1.11"
       }
     },
+    "gwNodeIPOffSetFromMaster": {
+      "type": "int",
+      "defaultValue": 14,
+      "metadata": {
+        "description": "IP address from the master node, for example if the first master is 10.1.1.1, then the first dataNode would be 10.1.1.11"
+      }
+    },
+    "secNodeIPOffSetFromMaster": {
+      "type": "int",
+      "defaultValue": 18,
+      "metadata": {
+        "description": "IP address from the master node, for example if the first master is 10.1.1.1, then the first dataNode would be 10.1.1.11"
+      }
+    },
     "numberOfDataNodes": {
       "type": "int",
       "defaultValue": 6,
@@ -243,6 +257,8 @@
     "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
     "ipOctet3": "[int(split(variables('sa'), '.')[3])]",
     "datanodeIpOctet3":"[add(int(split(variables('sa'), '.')[3]), parameters('dataNodeIPOffSetFromMaster'))]",
+    "gwnodeIpOctet3":"[add(int(split(variables('sa'), '.')[3]), parameters('gwNodeIPOffSetFromMaster'))]",
+    "secnodeIpOctet3":"[add(int(split(variables('sa'), '.')[3]), parameters('secNodeIPOffSetFromMaster'))]",
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
@@ -273,8 +289,12 @@
       "ipOctet2": "[variables('ipOctet2')]",
       "ipOctet3": "[variables('ipOctet3')]",
       "datanodeIpOctet3":"[variables('datanodeIpOctet3')]",
+      "gwnodeIpOctet3":"[variables('gwnodeIpOctet3')]",
+      "secnodeIpOctet3":"[variables('secnodeIpOctet3')]",
       "masterIP":"[variables('sa')]",
       "workerIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('datanodeIpOctet3'), 255)), '.', mod(variables('datanodeIpOctet3'), 255))]",
+      "gwIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('gwnodeIpOctet3'), 255)), '.', mod(variables('gwnodeIpOctet3'), 255))]",
+      "secIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('secnodeIpOctet3'), 255)), '.', mod(variables('secnodeIpOctet3'), 255))]",
       "virtualNetworkName": "[parameters('virtualNetworkName')]",
       "virtualNetworkRGName":"[parameters('virtualNetworkRGName')]",
       "vnetNewOrExisting": "existing",
