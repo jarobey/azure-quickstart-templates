@@ -123,6 +123,13 @@
         "description": "Number of security nodes (defaults to 4)"
       }
     },
+    "numberOfDBNodes": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of DB nodes--one primary, rest replicas (defaults to 4)"
+      }
+    },
     "masterVmSize": {
       "type": "string",
       "defaultValue": "Standard_DS14",
@@ -255,7 +262,7 @@
     "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
     "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
     "dbnodeIpOctet3": "[int(split(variables('sa'), '.')[3])]",
-    "ipOctet3": "[add(add(int(variables('dbnodeIpOctet3')), parameters('numberOfDbNodes')), parameters('ipOffsetFromLastIP'))]",
+    "ipOctet3": "[add(add(int(variables('dbnodeIpOctet3')), parameters('numberOfDBNodes')), parameters('ipOffsetFromLastIP'))]",
     "gwnodeIpOctet3":"[add(add(int(variables('ipOctet3')), 3), parameters('ipOffsetFromLastIP'))]",
     "secnodeIpOctet3":"[add(add(int(variables('gwnodeIpOctet3')), parameters('numberOfGwNodes')), parameters('ipOffsetFromLastIP'))]",
     "datanodeIpOctet3":"[add(add(int(variables('secnodeIpOctet3')), parameters('numberOfGwNodes')), parameters('ipOffsetFromLastIP'))]",
@@ -269,7 +276,7 @@
     	"masterNodeCount": 3,
     	"gwNodeCount": "[parameters('numberOfGwNodes')]",
     	"secNodeCount": "[parameters('numberOfSecNodes')]",
-    	"dbNodeCount": "[parameters('numberOfDbNodes')]"
+    	"dbNodeCount": "[parameters('numberOfDBNodes')]"
     },
     "vmSpec": {
       "masterVmSize": "[parameters('masterVmSize')]",
