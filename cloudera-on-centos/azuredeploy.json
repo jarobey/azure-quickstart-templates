@@ -361,7 +361,7 @@
         "mode": "Incremental",
         "templateLink": {
           "uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/mysql-replication/azuredeploy.json",
-          "contentVersion": "1.0.0.1"
+          "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "dnsName": {
