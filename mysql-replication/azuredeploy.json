@@ -1,5 +1,5 @@
 ﻿{
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2016-02-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "dnsName": {
@@ -109,7 +109,8 @@
             "type": "string",
             "defaultValue": "OpenLogic",
             "allowedValues": [
-                "OpenLogic"
+                "OpenLogic",
+                "cloudera"
             ],
             "metadata": {
                 "description": "publisher for the VM OS image"
@@ -119,7 +120,8 @@
             "type": "string",
             "defaultValue": "CentOS",
             "allowedValues": [
-                "CentOS"
+                "CentOS",
+                "cloudera-centos-6"
             ],
             "metadata": {
                 "description": "VM OS name"
@@ -130,7 +132,8 @@
             "defaultValue": "6.6",
             "allowedValues": [
                 "6.5",
-                "6.6"
+                "6.6",
+                "CLOUDERA-CENTOS-6"
             ],
             "metadata": {
                 "description": "VM OS version"
