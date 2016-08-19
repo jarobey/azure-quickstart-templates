@@ -15,6 +15,12 @@
         "description": "Admin password for the VMs (A mix of upper and lower-case characters, digits and symbols)"
       }
     },
+    "dbPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin passwords for the DB repication cluster (A mix of upper and lower-case characters, digits and symbols, no single quote)"
+      }
+    },
     "cmUsername": {
       "type": "string",
       "defaultValue": "cmadmin",
@@ -82,7 +88,7 @@
         "description": "CIDR for the subnet where VMs will be placed"
       }
     },
-    "masterNodeIPAddress": {
+    "clusterFirstIPAddress": {
       "type": "string",
       "defaultValue": "10.3.0.4",
       "metadata": {
@@ -147,6 +153,13 @@
       "defaultValue": "Standard_DS14",
       "metadata": {
         "description": "The size of the VMs deployed in the cluster (defaults to Standard_DS14)"
+      }
+    },
+    "dbVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS2",
+      "metadata": {
+        "description": "The size of the VMs deployed in the db cluster (defaults to Standard_DS2)"
       }
     },
     "company": {
@@ -238,13 +251,14 @@
     "subnetPrefix":"[parameters('subnetPrefix')]",
     "scriptsUri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/master/cloudera-on-centos",
     "share-resourcesUri": "[concat(variables('scriptsUri'), '/shared-resources-existing-vnet.json')]",
-    "sa": "[parameters('masterNodeIPAddress')]",
+    "sa": "[parameters('clusterFirstIPAddress')]",
     "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
     "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
-    "ipOctet3": "[int(split(variables('sa'), '.')[3])]",
-    "datanodeIpOctet3":"[add(add(int(variables('ipOctet3')), 3), parameters('ipOffsetFromLastIP'))]",
-    "gwnodeIpOctet3":"[add(add(int(variables('datanodeIpOctet3')), parameters('numberOfDataNodes')), parameters('ipOffsetFromLastIP'))]",
+    "dbnodeIpOctet3": "[int(split(variables('sa'), '.')[3])]",
+    "ipOctet3": "[add(add(int(variables('dbnodeIpOctet3')), parameters('numberOfDbNodes')), parameters('ipOffsetFromLastIP'))]",
+    "gwnodeIpOctet3":"[add(add(int(variables('ipOctet3')), 3), parameters('ipOffsetFromLastIP'))]",
     "secnodeIpOctet3":"[add(add(int(variables('gwnodeIpOctet3')), parameters('numberOfGwNodes')), parameters('ipOffsetFromLastIP'))]",
+    "datanodeIpOctet3":"[add(add(int(variables('secnodeIpOctet3')), parameters('numberOfGwNodes')), parameters('ipOffsetFromLastIP'))]",
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
@@ -254,19 +268,23 @@
     	"highAvailability": "true",
     	"masterNodeCount": 3,
     	"gwNodeCount": "[parameters('numberOfGwNodes')]",
-    	"secNodeCount": "[parameters('numberOfSecNodes')]"
+    	"secNodeCount": "[parameters('numberOfSecNodes')]",
+    	"dbNodeCount": "[parameters('numberOfDbNodes')]"
     },
     "vmSpec": {
       "masterVmSize": "[parameters('masterVmSize')]",
       "dataVmSize": "[parameters('dataVmSize')]",
       "gwVmSize": "[parameters('gwVmSize')]",
       "secVmSize": "[parameters('secVmSize')]",
+      "dbVmSize": "[parameters('dbVmSize')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
+      "dbPassword": "[parameters('dbPassword')]",
       "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
       "dataNodeASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]",
       "gwNodeASName": "[concat(parameters('dnsNamePrefix'), '-gwAS')]",
-      "secNodeASName": "[concat(parameters('dnsNamePrefix'), '-secAS')]"
+      "secNodeASName": "[concat(parameters('dnsNamePrefix'), '-secAS')]",
+      "dbNodeASName": "[concat(parameters('dnsNamePrefix'), '-dbAS')]"
     },
     "networkSpec": {
       "addressPrefix": "[variables('addressPrefix')]",
@@ -281,6 +299,7 @@
       "workerIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('datanodeIpOctet3'), 255)), '.', mod(variables('datanodeIpOctet3'), 255))]",
       "gwIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('gwnodeIpOctet3'), 255)), '.', mod(variables('gwnodeIpOctet3'), 255))]",
       "secIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('secnodeIpOctet3'), 255)), '.', mod(variables('secnodeIpOctet3'), 255))]",
+      "dbIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('dbnodeIpOctet3'), 255)), '.', mod(variables('dbnodeIpOctet3'), 255))]",
       "virtualNetworkName": "[parameters('virtualNetworkName')]",
       "virtualNetworkRGName":"[parameters('virtualNetworkRGName')]",
       "vnetNewOrExisting": "existing",
@@ -317,7 +336,109 @@
           },
           "secNodeASName": {
             "value": "[variables('vmSpec').secNodeASName]"
+          },
+          "dbNodeASName": {
+            "value": "[variables('vmSpec').dbNodeASName]"
           }
+        }
+      }
+    },
+    {
+      "name": "mysql-cluster",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "[variables('templateAPIVersion')]",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/shared-resources"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/mysql-replication/azuredeploy.json",
+          "contentVersion": "1.0.0.1"
+        },
+        "parameters": {
+          "dnsName": {
+            "value": "[concat(parameters('dnsNamePrefix'),'db')]"
+          },
+          "vmUserName": {
+            "value": "[variables('vmSpec').adminUserName]"
+          },
+          "vmPassword": {
+            "value": "[variables('vmSpec').adminPassword]"
+          },
+          "mysqlRootPassword": {
+            "value": "[variables('vmSpec').adminPassword]"
+          },
+          "mysqlReplicationPassword": {
+            "value": "[variables('vmSpec').adminPassword]"
+          },
+          "mysqlProbePassword": {
+            "value": "[variables('vmSpec').adminPassword]"
+          },
+          "vmSize": {
+            "value": "[variables('vmSpec').dbVmSize]"
+          },
+          "storageAccountType": {
+            "value": "[parameters('storageAccountType')]"
+          },
+          "virtualNetworkName": {
+            "value": "[variables('networkSpec').virtualNetworkName]"
+          },
+          "vnetNewOrExisting": {
+            "value": "[variables('networkSpec').vnetNewOrExisting]"
+          },
+          "virtualNetworkExistingRGName": {
+            "value": "[variables('networkSpec').virtualNetworkRGName]"
+          },
+          "dbSubnetName": {
+            "value": "[variables('networkSpec').virtualNetworkSubnetName]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[variables('networkSpec').addressPrefix]"
+          },
+          "dbSubnetAddressPrefix": {
+            "value": "[variables('networkSpec').subnetPrefix]"
+          },
+          "dbSubnetStartAddress": {
+            "value": "[variables('networkSpec').dbIP]"
+          },
+          "imagePublisher": {
+            "value": "cloudera"
+          },
+          "imageOffer": {
+            "value": "cloudera-centos-6"
+          },
+          "imageSKU": {
+            "value": "CLOUDERA-CENTOS-6"
+          },
+          "mysqlFrontEndPort0": {
+            "value": 3306
+          },
+          "mysqlFrontEndPort1": {
+            "value": 3307
+          },
+          "sshNatRuleFrontEndPort0": {
+            "value": 64001
+          },
+          "sshNatRuleFrontEndPort1": {
+            "value": 64002
+          },
+          "mysqlProbePort0": {
+            "value": 9200
+          },
+          "mysqlProbePort1": {
+            "defaultValue": 9201
+          },
+          "artifactsPath": {
+            "value": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/mysql-replication"
+          },
+          "customScriptCommandToExecute": {
+            "value": "bash azuremysql.sh"
+          },
+          "publicIPName": {
+            "value": "mysqlIP01"
+          }
+          
         }
       }
     },
@@ -503,7 +624,8 @@
       "apiVersion": "[variables('templateAPIVersion')]",
       "dependsOn": [
         "Microsoft.Resources/deployments/data-node",
-        "Microsoft.Resources/deployments/master-node"
+        "Microsoft.Resources/deployments/master-node",
+        "Microsoft.Resources/deployments/mysql-cluster"
       ],
       "properties": {
         "mode": "Incremental",
