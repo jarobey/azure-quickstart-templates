@@ -434,7 +434,7 @@
             "value": 9200
           },
           "mysqlProbePort1": {
-            "defaultValue": 9201
+            "value": 9201
           },
           "artifactsPath": {
             "value": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/mysql-replication"
