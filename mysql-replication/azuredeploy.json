@@ -107,7 +107,7 @@
         },
         "imagePublisher": {
             "type": "string",
-            "defaultValue": "OpenLogic",
+            "defaultValue": "cloudera",
             "allowedValues": [
                 "OpenLogic",
                 "cloudera"
@@ -118,7 +118,7 @@
         },
         "imageOffer": {
             "type": "string",
-            "defaultValue": "CentOS",
+            "defaultValue": "cloudera-centos-6",
             "allowedValues": [
                 "CentOS",
                 "cloudera-centos-6"
@@ -129,7 +129,7 @@
         },
         "imageSKU": {
             "type": "string",
-            "defaultValue": "6.6",
+            "defaultValue": "CLOUDERA-CENTOS-6",
             "allowedValues": [
                 "6.5",
                 "6.6",
