@@ -365,7 +365,7 @@
         },
         "parameters": {
           "dnsName": {
-            "value": "[concat(parameters('dnsNamePrefix'),'db')]"
+            "value": "[concat(parameters('dnsNamePrefix'),'-db')]"
           },
           "vmUserName": {
             "value": "[variables('vmSpec').adminUserName]"
