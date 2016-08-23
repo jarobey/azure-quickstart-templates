@@ -454,7 +454,8 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "[variables('templateAPIVersion')]",
       "dependsOn": [
-        "Microsoft.Resources/deployments/shared-resources"
+        "Microsoft.Resources/deployments/shared-resources",
+        "Microsoft.Resources/deployments/mysql-cluster"
       ],
       "properties": {
         "mode": "Incremental",
@@ -498,7 +499,8 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "[variables('templateAPIVersion')]",
       "dependsOn": [
-        "Microsoft.Resources/deployments/shared-resources"
+        "Microsoft.Resources/deployments/shared-resources",
+        "Microsoft.Resources/deployments/mysql-cluster"
       ],
       "properties": {
         "mode": "Incremental",
@@ -542,7 +544,8 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "[variables('templateAPIVersion')]",
       "dependsOn": [
-        "Microsoft.Resources/deployments/shared-resources"
+        "Microsoft.Resources/deployments/shared-resources",
+        "Microsoft.Resources/deployments/mysql-cluster"
       ],
       "properties": {
         "mode": "Incremental",
@@ -586,7 +589,8 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "[variables('templateAPIVersion')]",
       "dependsOn": [
-        "Microsoft.Resources/deployments/shared-resources"
+        "Microsoft.Resources/deployments/shared-resources",
+        "Microsoft.Resources/deployments/mysql-cluster"
       ],
       "properties": {
         "mode": "Incremental",
