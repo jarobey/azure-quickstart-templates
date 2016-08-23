@@ -360,7 +360,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/master/mysql-replication/azuredeploy.json",
+          "uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/mysql-replication/azuredeploy.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -410,13 +410,13 @@
             "value": "[variables('networkSpec').dbIP]"
           },
           "imagePublisher": {
-            "value": "cloudera"
+            "value": "OpenLogic"
           },
           "imageOffer": {
-            "value": "cloudera-centos-6"
+            "value": "CentOS"
           },
           "imageSKU": {
-            "value": "CLOUDERA-CENTOS-6"
+            "value": "6.6"
           },
           "mysqlFrontEndPort0": {
             "value": 3306
@@ -437,7 +437,7 @@
             "value": 9201
           },
           "artifactsPath": {
-            "value": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/master/mysql-replication"
+            "value": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/mysql-replication"
           },
           "customScriptCommandToExecute": {
             "value": "bash azuremysql.sh"
