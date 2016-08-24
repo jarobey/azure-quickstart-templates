@@ -219,7 +219,6 @@
     "customScriptFilePath": "[concat(parameters('artifactsPath'), '/azuremysql.sh')]",
     "mysqlConfigFilePath": "[concat(parameters('artifactsPath'), '/my.cnf.template')]",
     "singleQuote": "",
-
     "virtualNetworkSetupURL": "[concat(parameters('artifactsPath'),'/vnet-',parameters('vnetNewOrExisting'),'.json')]",
     "sa": "[parameters('dbSubnetStartAddress')]",
     "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
@@ -426,7 +425,7 @@
               	"privateIPAddress": "[parameters('dblbIP')]",
                 "privateIPAllocationMethod": "Static",
                 "subnet": {
-                	"id": "[concat(concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')),'/subnets/'),parameters('dbSubnetName'))]"
+                	"id": "[concat(concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkExistingRGName')),'/subnets/'),parameters('dbSubnetName'))]"
                 }
               }
             }
