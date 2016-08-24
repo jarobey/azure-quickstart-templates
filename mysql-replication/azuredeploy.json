@@ -425,7 +425,7 @@
               	"privateIPAddress": "[parameters('dblbIP')]",
                 "privateIPAllocationMethod": "Static",
                 "subnet": {
-                	"id": "[concat(concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkExistingRGName')),'/subnets/'),parameters('dbSubnetName'))]"
+                	"id": "[concat(concat(resourceId(parameters('virtualNetworkExistingRGName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')),'/subnets/'),parameters('dbSubnetName'))]"
                 }
               }
             }
