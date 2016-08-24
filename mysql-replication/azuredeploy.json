@@ -426,7 +426,7 @@
               	"privateIPAddress": "[parameters('dblbIP')]",
                 "privateIPAllocationMethod": "Static",
                 "subnet": {
-                	"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_clouderatest_vnet_name')), parameters('/subnets/testscope'))]"
+                	"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')),parameters('dbSubnetName'))]"
                 }
               }
             }
