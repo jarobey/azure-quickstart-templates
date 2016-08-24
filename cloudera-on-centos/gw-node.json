@@ -298,7 +298,7 @@
           "vmSize": "[parameters('vmSpec').gwVmSize]"
         },
         "osProfile": {
-          "computerName": "[reference(concat(variables('vmName'), copyIndex())).dnsSettings.fqdn]",
+          "computerName": "[variables('vmName')]",
           "adminUsername": "[parameters('vmSpec').adminUserName]",
           "adminPassword": "[parameters('vmSpec').adminPassword]",
           "linuxConfiguration": {
@@ -315,7 +315,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://', variables('storageAccountName'), copyIndex(), '.blob.core.windows.net/vhds/', variables('vmName'), '-vhd', copyIndex(), '.vhd')]"
+              "uri": "[concat('http://', variables('storageAccountName'), copyIndex(), '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
