@@ -398,5 +398,9 @@
     }
   ],
   "outputs": {
+    "fqdn": {
+      "type": "string",
+      "value": "[concat(variables('vmName'), '0')]"
+    }
   }
 }
