@@ -300,7 +300,7 @@
           "vmSize": "[parameters('vmSpec').masterVmSize]"
         },
         "osProfile": {
-          "computerName": "[reference(concat(variables('vmName'), copyIndex())).dnsSettings.fqdn]",
+          "computerName": "[variables('vmName')]",
           "adminUsername": "[parameters('vmSpec').adminUserName]",
           "adminPassword": "[parameters('vmSpec').adminPassword]",
           "linuxConfiguration": {
