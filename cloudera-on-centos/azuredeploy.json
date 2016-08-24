@@ -439,7 +439,7 @@
             "value": 9201
           },
           "artifactsPath": {
-            "value": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/mysql-replication"
+            "value": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/master/mysql-replication"
           },
           "customScriptCommandToExecute": {
             "value": "bash azuremysql.sh"
