@@ -107,10 +107,9 @@
         },
         "imagePublisher": {
             "type": "string",
-            "defaultValue": "cloudera",
+            "defaultValue": "OpenLogic",
             "allowedValues": [
-                "OpenLogic",
-                "cloudera"
+                "OpenLogic"
             ],
             "metadata": {
                 "description": "publisher for the VM OS image"
@@ -118,10 +117,9 @@
         },
         "imageOffer": {
             "type": "string",
-            "defaultValue": "cloudera-centos-6",
+            "defaultValue": "CentOS",
             "allowedValues": [
-                "CentOS",
-                "cloudera-centos-6"
+                "CentOS"
             ],
             "metadata": {
                 "description": "VM OS name"
@@ -129,11 +127,10 @@
         },
         "imageSKU": {
             "type": "string",
-            "defaultValue": "CLOUDERA-CENTOS-6",
+            "defaultValue": "6.6",
             "allowedValues": [
                 "6.5",
-                "6.6",
-                "CLOUDERA-CENTOS-6"
+                "6.6"
             ],
             "metadata": {
                 "description": "VM OS version"
@@ -196,11 +193,11 @@
                 "description": "bash script command line"
             }
         },
-        "publicIPName": {
+        "dblbIP": {
             "type": "string",
-            "defaultValue": "mysqlIP01",
+            "defaultValue": "10.0.1.6",
             "metadata": {
-                "description": "public IP name for MySQL loadbalancer"
+                "description": "private IP address for MySQL loadbalancer"
             }
         }
     },
@@ -209,8 +206,6 @@
     "resourceAPIVersion": "2015-06-15",
     "storageAccountName": "[concat(uniquestring(resourceGroup().id),'storage')]",
     "nodeCount": 2,
-    "lbPublicIPName": "[parameters('publicIPName')]",
-    "lbPublicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPName'))]",
     "lbName": "[concat(parameters('dnsName'), '-lb')]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "ilbBackendAddressPoolName": "[concat(parameters('dnsName'), '-ilbBackendPool')]",
@@ -268,18 +263,6 @@
         "location": "[resourceGroup().location]",
         "properties": {
           "accountType": "[parameters('storageAccountType')]"
-        }
-      },
-      {
-        "apiVersion": "[variables('resourceAPIVersion')]",
-        "type": "Microsoft.Network/publicIPAddresses",
-        "name": "[variables('lbPublicIPName')]",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "publicIPAllocationMethod": "Static",
-          "dnsSettings": {
-            "domainNameLabel": "[parameters('dnsName')]"
-          }
         }
       },
       {
@@ -435,16 +418,15 @@
         "type": "Microsoft.Network/loadBalancers",
         "name": "[variables('lbName')]",
         "location": "[resourceGroup().location]",
-        "dependsOn": [
-          "[concat('Microsoft.Network/publicIPAddresses/', variables('lbPublicIPName'))]"
-        ],
         "properties": {
           "frontendIPConfigurations": [
             {
               "name": "[variables('sshIPConfigName')]",
               "properties": {
-                "publicIPAddress": {
-                  "id": "[variables('lbPublicIPRef')]"
+              	"privateIPAddress": "[parameters('dblbIP')]",
+                "privateIPAllocationMethod": "Static",
+                "subnet": {
+                	"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_clouderatest_vnet_name')), parameters('/subnets/testscope'))]"
                 }
               }
             }
@@ -532,13 +514,5 @@
       }
     ],
     "outputs": {
-        "fqdn": {
-            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPName')),providers('Microsoft.Network', 'publicIPAddresses').apiVersions[0]).dnsSettings.fqdn]",
-            "type": "string"
-        },
-        "ipaddress": {
-            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPName')),providers('Microsoft.Network', 'publicIPAddresses').apiVersions[0]).ipAddress]",
-            "type": "string"
-        }
     }
 }

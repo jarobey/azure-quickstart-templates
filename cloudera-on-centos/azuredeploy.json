@@ -261,7 +261,8 @@
     "sa": "[parameters('clusterFirstIPAddress')]",
     "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
     "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
-    "dbnodeIpOctet3": "[int(split(variables('sa'), '.')[3])]",
+    "dblbnodeIpOctet3": "[int(split(variables('sa'), '.')[3])]",
+    "dbnodeIpOctet3": "[add(add(int(variables('dblbnodeIpOctet3')), 1), parameters('ipOffsetFromLastIP'))]",
     "ipOctet3": "[add(add(int(variables('dbnodeIpOctet3')), parameters('numberOfDBNodes')), parameters('ipOffsetFromLastIP'))]",
     "gwnodeIpOctet3":"[add(add(int(variables('ipOctet3')), 3), parameters('ipOffsetFromLastIP'))]",
     "secnodeIpOctet3":"[add(add(int(variables('gwnodeIpOctet3')), parameters('numberOfGwNodes')), parameters('ipOffsetFromLastIP'))]",
@@ -307,6 +308,7 @@
       "gwIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('gwnodeIpOctet3'), 255)), '.', mod(variables('gwnodeIpOctet3'), 255))]",
       "secIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('secnodeIpOctet3'), 255)), '.', mod(variables('secnodeIpOctet3'), 255))]",
       "dbIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('dbnodeIpOctet3'), 255)), '.', mod(variables('dbnodeIpOctet3'), 255))]",
+      "dblbIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('dblbnodeIpOctet3'), 255)), '.', mod(variables('dblbnodeIpOctet3'), 255))]",
       "virtualNetworkName": "[parameters('virtualNetworkName')]",
       "virtualNetworkRGName":"[parameters('virtualNetworkRGName')]",
       "vnetNewOrExisting": "existing",
@@ -360,7 +362,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/mysql-replication/azuredeploy.json",
+          "uri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/master/mysql-replication/azuredeploy.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -442,8 +444,8 @@
           "customScriptCommandToExecute": {
             "value": "bash azuremysql.sh"
           },
-          "publicIPName": {
-            "value": "mysqlIP01"
+          "dblbIP": {
+            "value": "[variables('networkSpec').dblbIP]"
           }
           
         }
