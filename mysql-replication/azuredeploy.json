@@ -215,7 +215,7 @@
     "sshIPConfigName": "[concat(parameters('dnsName'), '-sshIPCfg')]",
     "sshIPConfig": "[concat(variables('lbID'),'/frontendIPConfigurations/',variables('sshIPConfigName'))]",
     "nicName": "[concat(parameters('dnsName'), '-nic')]",
-    "availabilitySetName": "[concat(parameters('dnsName'), '-set')]",
+    "availabilitySetName": "[concat(parameters('dnsName'), 'AS')]",
     "customScriptFilePath": "[concat(parameters('artifactsPath'), '/azuremysql.sh')]",
     "mysqlConfigFilePath": "[concat(parameters('artifactsPath'), '/my.cnf.template')]",
     "singleQuote": "",
