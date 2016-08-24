@@ -36,7 +36,6 @@
     "vmName": "[concat(parameters('dnsNamePrefix'), '-dn')]",
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "storageAccountName": "[concat('dn', parameters('storageAccount').prefix)]",
-    "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "securityGroupName": "[concat(parameters('dnsNamePrefix'), '-dn-sg')]"
   },
   "resources": [
@@ -177,27 +176,10 @@
     },
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat(variables('publicIPAddressName'), copyIndex())]",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "publicIPLoop",
-        "count": "[parameters('vmCount')]"
-      },
-      "properties": {
-        "publicIPAllocationMethod": "Dynamic",
-        "dnsSettings": {
-          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-dn', copyIndex())]"
-        }
-      }
-    },
-    {
-      "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat(variables('nicName'), copyIndex())]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'), copyIndex())]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
       "copy": {
@@ -213,9 +195,6 @@
               "privateIPAddress": "[concat(parameters('networkSpec').ipOctet01, add(parameters('networkSpec').ipOctet2, div(copyIndex(parameters('networkSpec').datanodeIpOctet3), 256)), '.', mod(copyIndex(parameters('networkSpec').datanodeIpOctet3), 256))]",
               "subnet": {
                 "id": "[concat(parameters('vnetID'), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
-              },
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(variables('publicIPAddressName'), copyIndex()))]"
               }
             }
           }
@@ -251,7 +230,7 @@
           "vmSize": "[parameters('vmSpec').dataVmSize]"
         },
         "osProfile": {
-          "computerName": "[reference(concat(variables('publicIPAddressName'), copyIndex())).dnsSettings.fqdn]",
+          "computerName": "[reference(concat(variables('vmName'), copyIndex())).dnsSettings.fqdn]",
           "adminUsername": "[parameters('vmSpec').adminUserName]",
           "adminPassword": "[parameters('vmSpec').adminPassword]",
           "linuxConfiguration": {
@@ -395,7 +374,7 @@
             "[concat(parameters('scriptsUri'), '/scripts/prepare-datanode-disks.sh')]",
             "[concat(parameters('scriptsUri'), '/scripts/initialize-node.sh')]"
           ],
-          "commandToExecute": "[concat('sh initialize-node.sh \"', variables('masterIP'), '\" \"', variables('workerIP'), '\" \"', parameters('dnsNamePrefix'), '\" \"', reference(concat(variables('publicIPAddressName'), copyIndex())).dnsSettings.fqdn, '\" ', parameters('clusterSpec').masterNodeCount, ' ', parameters('clusterSpec').dataNodeCount, ' \"', parameters('vmSpec').adminUserName, '\" ', 'datanode', ' >> /home/$ADMINUSER/initialize-datanode.log 2>&1')]"
+          "commandToExecute": "[concat('sh initialize-node.sh \"', variables('masterIP'), '\" \"', variables('workerIP'), '\" \"', parameters('dnsNamePrefix'), '\" \"', reference(concat(variables('vmName'), copyIndex())).dnsSettings.fqdn, '\" ', parameters('clusterSpec').masterNodeCount, ' ', parameters('clusterSpec').dataNodeCount, ' \"', parameters('vmSpec').adminUserName, '\" ', 'datanode', ' >> /home/$ADMINUSER/initialize-datanode.log 2>&1')]"
         }
       }
     }
