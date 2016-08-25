@@ -83,6 +83,16 @@ log "Connecting to external DB"
 wget http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.39.tar.gz >> /tmp/initialize-cloudera-server.log
 tar zxvf mysql-connector-java-5.1.39.tar.gz >> /tmp/initialize-cloudera-server.log
 cp mysql-connector-java-5.1.39/mysql-connector-java-5.1.39-bin.jar /usr/share/java/mysql-connector-java.jar
+echo "installing mysql"
+wget https://dev.mysql.com/get/Downloads/MySQL-5.6/MySQL-5.6.26-1.el6.x86_64.rpm-bundle.tar
+tar -xvf MySQL-5.6.26-1.el6.x86_64.rpm-bundle.tar
+curlib=$(rpm -qa |grep mysql-libs-)
+rpm -e --nodeps $curlib
+rpm -ivh MySQL-client-5.6.26-1.el6.x86_64.rpm
+wget http://dev.mysql.com/get/Downloads/Connector-Python/mysql-connector-python-2.0.4-1.el6.noarch.rpm
+rpm -ivh mysql-connector-python-2.0.4-1.el6.noarch.rpm
+wget http://dev.mysql.com/get/Downloads/MySQLGUITools/mysql-utilities-1.5.5-1.el6.noarch.rpm
+rpm -ivh mysql-utilities-1.5.5-1.el6.noarch.rpm
 bash setup-mysql.sh  >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
 
 log "finished installing external DB"
