@@ -20,14 +20,17 @@ Password=$7
 cmUser=$8
 cmPassword=$9
 
-EMAILADDRESS=${10}
-BUSINESSPHONE=${11}
-FIRSTNAME=${12}
-LASTNAME=${13}
-JOBROLE=${14}
-JOBFUNCTION=${15}
-COMPANY=${16}
-VMSIZE=${17}
+dbAdminUser=${10}
+dbAdminPass=${11}
+
+EMAILADDRESS=${12}
+BUSINESSPHONE=${13}
+FIRSTNAME=${14}
+LASTNAME=${15}
+JOBROLE=${16}
+JOBFUNCTION=${17}
+COMPANY=${18}
+VMSIZE=${19}
 
 log "BEGIN: master node deployments"
 
@@ -76,11 +79,11 @@ done
 if [ $n -ge 5 ]; then log "scp error $remote, exiting..." & exit 1; fi
 
 #######################################################################################################################
-log "installing external DB"
-sudo yum install postgresql-server -y
-bash install-postgresql.sh >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
-#restart to make sure all configuration take effects
-sudo service postgresql restart
+log "Connecting to external DB"
+wget http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.39.tar.gz >> /tmp/initialize-cloudera-server.log
+tar zxvf mysql-connector-java-5.1.39.tar.gz >> /tmp/initialize-cloudera-server.log
+cp mysql-connector-java-5.1.39/mysql-connector-java-5.1.39-bin.jar /usr/share/java/mysql-connector-java.jar
+bash setup-mysql.sh  >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
 
 log "finished installing external DB"
 #######################################################################################################################
