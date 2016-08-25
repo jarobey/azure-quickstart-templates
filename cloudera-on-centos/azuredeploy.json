@@ -673,6 +673,12 @@
           },
           "cmPassword": {
             "value": "[parameters('cmPassword')]"
+          },    
+          "dbAdminUsername": {
+      	    "value": "root"
+          },
+          "dbAdminPassword": {
+            "value": "[parameters('dbPassword')]"
           },
           "company": {
             "value": "[parameters('Company')]"
