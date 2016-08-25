@@ -20,17 +20,18 @@ Password=$7
 cmUser=$8
 cmPassword=$9
 
-dbAdminUser=${10}
-dbAdminPass=${11}
+dbHost=${10}
+dbAdminUser=${11}
+dbAdminPass=${12}
 
-EMAILADDRESS=${12}
-BUSINESSPHONE=${13}
-FIRSTNAME=${14}
-LASTNAME=${15}
-JOBROLE=${16}
-JOBFUNCTION=${17}
-COMPANY=${18}
-VMSIZE=${19}
+EMAILADDRESS=${13}
+BUSINESSPHONE=${14}
+FIRSTNAME=${15}
+LASTNAME=${16}
+JOBROLE=${17}
+JOBFUNCTION=${18}
+COMPANY=${19}
+VMSIZE=${20}
 
 log "BEGIN: master node deployments"
 
@@ -93,7 +94,7 @@ wget http://dev.mysql.com/get/Downloads/Connector-Python/mysql-connector-python-
 rpm -ivh mysql-connector-python-2.0.4-1.el6.noarch.rpm
 wget http://dev.mysql.com/get/Downloads/MySQLGUITools/mysql-utilities-1.5.5-1.el6.noarch.rpm
 rpm -ivh mysql-utilities-1.5.5-1.el6.noarch.rpm
-bash setup-mysql.sh  >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
+bash setup-mysql.sh $dbHost $dbAdminUser $dbAdminPass >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
 
 log "finished installing external DB"
 #######################################################################################################################

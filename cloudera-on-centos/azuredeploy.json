@@ -674,8 +674,11 @@
           "cmPassword": {
             "value": "[parameters('cmPassword')]"
           },    
+          "dbHost": {
+      	    "value": "[variables('networkSpec').dblbIP]"
+          },
           "dbAdminUsername": {
-      	    "value": "root"
+      	    "value": "admin"
           },
           "dbAdminPassword": {
             "value": "[parameters('dbPassword')]"

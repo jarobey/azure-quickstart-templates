@@ -24,17 +24,18 @@ HA=$8
 PASSWORD=${9}
 CMUSER=${10}
 CMPASSWORD=${11}
-DBADMINUSER=${12}
-DBADMINPASSWORD=${13}
-EMAILADDRESS=${14}
-BUSINESSPHONE=${15}
-FIRSTNAME=${16}
-LASTNAME=${17}
-JOBROLE=${18}
-JOBFUNCTION=${19}
-COMPANY=${20}
-INSTALLCDH=${21}
-VMSIZE=${22}
+DBHOST=${12}
+DBADMINUSER=${13}
+DBADMINPASSWORD=${14}
+EMAILADDRESS=${15}
+BUSINESSPHONE=${16}
+FIRSTNAME=${17}
+LASTNAME=${18}
+JOBROLE=${19}
+JOBFUNCTION=${20}
+COMPANY=${21}
+INSTALLCDH=${22}
+VMSIZE=${23}
 
 CLUSTERNAME=$NAMEPREFIX
 
@@ -123,7 +124,7 @@ log "Worker ip to be supplied to next script: $worker_ip"
 log "BEGIN: Starting detached script to finalize initialization"
 if [ "$INSTALLCDH" == "True" ]
 then
-  sh initialize-cloudera-server.sh "$CLUSTERNAME" "$key" "$mip" "$worker_ip" "$HA" "$ADMINUSER" "$PASSWORD" "$CMUSER" "$CMPASSWORD" "$DBADMINUSER" "$DBADMINPASSWORD" "$EMAILADDRESS" "$BUSINESSPHONE" "$FIRSTNAME" "$LASTNAME" "$JOBROLE" "$JOBFUNCTION" "$COMPANY" "$VMSIZE">/dev/null 2>&1
+  sh initialize-cloudera-server.sh "$CLUSTERNAME" "$key" "$mip" "$worker_ip" "$HA" "$ADMINUSER" "$PASSWORD" "$CMUSER" "$CMPASSWORD" "$DBHOST" "$DBADMINUSER" "$DBADMINPASSWORD" "$EMAILADDRESS" "$BUSINESSPHONE" "$FIRSTNAME" "$LASTNAME" "$JOBROLE" "$JOBFUNCTION" "$COMPANY" "$VMSIZE">/dev/null 2>&1
 fi
 log "END: Detached script to finalize initialization running. PID: $!"
 
