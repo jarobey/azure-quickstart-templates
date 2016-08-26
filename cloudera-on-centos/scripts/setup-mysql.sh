@@ -39,8 +39,8 @@ create_database()
   execute_sql "create database $DBNAME DEFAULT CHARACTER SET utf8;"
   fail_or_continue $? "Unable to create database $DBNAME"
 
-  echo "grant all on $DBNAME.* TO '$DBNAME'@'%' IDENTIFIED BY '$PW';"
-  execute_sql "grant all on $DBNAME.* TO '$USER'@'%' IDENTIFIED BY '$PW';"
+  echo "grant all privileges on $DBNAME.* TO '$DBNAME'@'%' IDENTIFIED BY '$PW';"
+  execute_sql "grant all privileges on $DBNAME.* TO '$USER'@'%' IDENTIFIED BY '$PW';"
   fail_or_continue $? "Unable to grant priveleges on database $DBNAME to $DBNAME"
 }
 
@@ -203,7 +203,7 @@ EOF
 }
 
 NOW=$(date +%Y%m%d-%H%M%S)
-SCM_PWD=create_random_password
+SCM_PWD=`create_random_password`
 
 create_scm_db $SCM_PWD
 create_mgmt_role_db ACTIVITYMONITOR amon
