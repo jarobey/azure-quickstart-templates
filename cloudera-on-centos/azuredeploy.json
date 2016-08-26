@@ -376,13 +376,13 @@
             "value": "[variables('vmSpec').adminPassword]"
           },
           "mysqlRootPassword": {
-            "value": "[variables('vmSpec').adminPassword]"
+            "value": "[variables('vmSpec').dbPassword]"
           },
           "mysqlReplicationPassword": {
-            "value": "[variables('vmSpec').adminPassword]"
+            "value": "[variables('vmSpec').dbPassword]"
           },
           "mysqlProbePassword": {
-            "value": "[variables('vmSpec').adminPassword]"
+            "value": "[variables('vmSpec').dbPassword]"
           },
           "vmSize": {
             "value": "[variables('vmSpec').dbVmSize]"
