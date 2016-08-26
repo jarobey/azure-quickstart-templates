@@ -2,7 +2,6 @@
 CURRENT_VERSION_MARKER='Azure_1'
 DB_ADMIN_USER=$2
 DB_ADMIN_PASS=$3
-SCM_PWD=$DB_ADMIN_PASS
 DB_HOST=$1
 DB_PORT=3306
 DB_HOSTPORT="$DB_HOST:$DB_PORT"
@@ -204,6 +203,7 @@ EOF
 }
 
 NOW=$(date +%Y%m%d-%H%M%S)
+SCM_PWD=create_random_password
 
 create_scm_db $SCM_PWD
 create_mgmt_role_db ACTIVITYMONITOR amon
