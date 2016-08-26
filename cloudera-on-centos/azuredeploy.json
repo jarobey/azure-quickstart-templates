@@ -256,7 +256,7 @@
     "installCDH":"True",
     "addressPrefix":"[parameters('addressPrefix')]",
     "subnetPrefix":"[parameters('subnetPrefix')]",
-    "scriptsUri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/deployallsanspublicip/cloudera-on-centos",
+    "scriptsUri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/deployallsanspubip/cloudera-on-centos",
     "share-resourcesUri": "[concat(variables('scriptsUri'), '/shared-resources-existing-vnet.json')]",
     "sa": "[parameters('clusterFirstIPAddress')]",
     "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
@@ -362,7 +362,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/deployallsanspublicip/mysql-replication/azuredeploy.json",
+          "uri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/deployallsanspubip/mysql-replication/azuredeploy.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -439,7 +439,7 @@
             "value": 9201
           },
           "artifactsPath": {
-            "value": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/deployallsanspublicip/mysql-replication"
+            "value": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/deployallsanspubip/mysql-replication"
           },
           "customScriptCommandToExecute": {
             "value": "bash azuremysql.sh"
