@@ -180,7 +180,7 @@
         },
         "artifactsPath": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/master/mysql-replication",
+            "defaultValue": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/deployallsanspublicip/mysql-replication",
             "metadata": {
                 "description": "template and script file location",
                 "artifactsBaseUrl": "Base URL of the Publisher Template gallery package"
