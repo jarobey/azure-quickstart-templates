@@ -7,7 +7,6 @@ DB_PORT=3306
 DB_HOSTPORT="$DB_HOST:$DB_PORT"
 DB_PROP_FILE=/etc/cloudera-scm-server/db.properties
 MGMT_DB_PROP_FILE=/etc/cloudera-scm-server/db.mgmt.properties
-DB_CMD="mysql -u $DB_ADMIN_USER -p $DB_ADMIN_PASS -h $DB_HOST -P $DB_PORT -e"
 
 fail_or_continue()
 {
@@ -15,13 +14,14 @@ fail_or_continue()
     local STR=$2
 
     if [[ $RET -ne 0 ]]; then
-        stop_db
-        if [[ -z $STR ]]; then
-            STR="--> Error $RET"
-        fi
         echo "$STR, giving up"
         exit $RET
     fi
+}
+
+execute_sql()
+{
+  mysql -h $DB_HOST -P $DB_PORT -u $DB_ADMIN_USER -p$DB_ADMIN_PASS -e "$1"
 }
 
 create_database()
@@ -30,18 +30,18 @@ create_database()
   local PW=$2
 
   echo "create database $DBNAME DEFAULT CHARACTER SET utf8;"
-  $DB_CMD "create database $DBNAME DEFAULT CHARACTER SET utf8;"
+  execute_sql "create database $DBNAME DEFAULT CHARACTER SET utf8;"
   fail_or_continue $? "Unable to create database $DBNAME"
-  
+
   echo "grant all on $DBNAME.* TO '$DBNAME'@'%' IDENTIFIED BY '$PW';"
-  $DB_CMD "grant all on $DBNAME.* TO '$DBNAME'@'%' IDENTIFIED BY '$PW';"
+  execute_sql "grant all on $DBNAME.* TO '$DBNAME'@'%' IDENTIFIED BY '$PW';"
   fail_or_continue $? "Unable to grant priveleges on database $DBNAME to $DBNAME"
 }
 
 # Returns 0 if the given DB exists in the DB list file.
 db_exists()
 {
-  grep -q -s -e "^$1$" `$DB_CMD "show databases;"`
+  execute_sql "show databases;" | grep -e "^$1$" 1>/dev/null 2>&1
 }
 
 create_random_password()
