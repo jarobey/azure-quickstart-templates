@@ -64,7 +64,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[concat(parameters('networkSpec').virtualNetworkName, '-sg')]",
+      "name": "[(parameters('networkSpec').securityGroupName]",
       "location": "[resourceGroup().location]",
       "properties": {
         "securityRules": [
