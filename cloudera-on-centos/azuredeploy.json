@@ -313,7 +313,7 @@
       "virtualNetworkRGName":"[parameters('virtualNetworkRGName')]",
       "vnetNewOrExisting": "existing",
       "virtualNetworkSubnetName": "[parameters('subnetName')]",
-      "securityGroupName": "concat(parameters('virtualNetworkName'), '-sg')"
+      "securityGroupName": "[concat(parameters('virtualNetworkName'), '-sg')]"
     },
     "VNetId": "[resourceId(parameters('virtualNetworkRGName'),concat('Microsoft.Network','/','virtualNetworks'),parameters('virtualNetworkName'))]"
   },
