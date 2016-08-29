@@ -74,10 +74,7 @@
               }
             }
           }
-        ],
-        "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
-        }
+        ]
       }
     },
     {
@@ -135,6 +132,12 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicName'), copyIndex()))]"
             }
           ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "true",
+            "storageUri": "[concat('http://', variables('storageAccountName'), copyIndex(),'.blob.core.windows.net')]"
+          }
         }
       }
     }

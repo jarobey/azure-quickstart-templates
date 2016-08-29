@@ -267,5 +267,11 @@
         ]
       }
     }
-  ]
+  ],
+  "outputs": {
+  	"nsgid": {
+  		"value": "[reference(parameters('storageAccountName'))]",
+        "type" : "object"
+  	}
+  }
 }
