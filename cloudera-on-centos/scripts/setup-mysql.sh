@@ -39,8 +39,8 @@ create_database()
   execute_sql "create database $DBNAME DEFAULT CHARACTER SET utf8;"
   fail_or_continue $? "Unable to create database $DBNAME"
 
-  echo "grant all privileges on $DBNAME.* TO '$DBNAME'@'%' IDENTIFIED BY '$PW';"
-  execute_sql "grant all privileges on $DBNAME.* TO '$USER'@'%' IDENTIFIED BY '$PW';"
+  echo "grant all privileges on $DBNAME.* TO '$DBNAME'@'%' IDENTIFIED BY '$PW'; flush privileges;"
+  execute_sql "grant all privileges on $DBNAME.* TO '$USER'@'%' IDENTIFIED BY '$PW'; flush privileges;"
   fail_or_continue $? "Unable to grant priveleges on database $DBNAME to $DBNAME"
 }
 
