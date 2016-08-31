@@ -57,6 +57,8 @@ innodb_thread_concurrency = 8
 innodb_flush_method = O_DIRECT
 innodb_log_file_size = 512M
 
+default-storage-engine=InnoDB
+
 [mysqld_safe]
 log-error=/var/log/mysqld.log
 pid-file=/var/run/mysqld/mysqld.pid
