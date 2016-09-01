@@ -31,12 +31,11 @@
     }
   },
   "variables": {
-    "masterIP":"[parameters('networkSpec').masterIP]",
-    "workerIP":"[parameters('networkSpec').workerIP]",
-    "vmName": "[concat(parameters('dnsNamePrefix'), '-mn')]",
+    "directorIP":"[parameters('networkSpec').directorIP]",
+    "vmName": "[concat(parameters('dnsNamePrefix'), '-dir')]",
     "nicName": "[concat(variables('vmName'), '-nic')]",
-    "storageAccountName": "[concat('nn', parameters('storageAccount').prefix)]",
-    "securityGroupName": "[concat(parameters('dnsNamePrefix'), '-mn-sg')]"
+    "storageAccountName": "[concat('dir', parameters('storageAccount').prefix)]",
+    "securityGroupName": "[concat(parameters('dnsNamePrefix'), '-dir-sg')]"
   },
   "resources": [
     {
