@@ -233,8 +233,7 @@
       "masterASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
       "dataASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]",
       "utilityASName": "[concat(parameters('dnsNamePrefix'), '-utilAS')]",
-      "dbVmSize": "[parameters('dbVmSize')]",
-      "directorVmSize": "[parameters('directorVmSize')]"
+      "dbVmSize": "[parameters('dbVmSize')]"
     },
     "networkSpec": {
       "addressPrefix": "[variables('addressPrefix')]",
