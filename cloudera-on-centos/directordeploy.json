@@ -1,0 +1,428 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.1",
+  "parameters": {
+    "adminUserName": {
+      "type": "string",
+      "defaultValue": "azureuser",
+      "metadata": {
+        "description": "Admin user name for the VMs"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password for the VMs (A mix of upper and lower-case characters, digits and symbols)"
+      }
+    },
+    "dbPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin passwords for the DB repication cluster (A mix of upper and lower-case characters, digits and symbols, no single quote)"
+      }
+    },
+    "cmUsername": {
+      "type": "string",
+      "defaultValue": "cmadmin",
+      "metadata": {
+        "description": "User name for the Cloudera Manager"
+      }
+    },
+    "cmPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "password for the Cloudera Manager (A mix of upper and lower-case characters, digits and symbols)"
+      }
+    },
+    "storageAccountPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique namespace for the Storage Account where the VM disks will be placed (alphahumeric characters only)"
+      }
+    },
+    "dnsNamePrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique public DNS name where the VMs will be exposed"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Premium_LRS",
+      "metadata": {
+        "description": "The type of the Storage Account to be created (Default to Premium_LRS)"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultValue": "clouderavnet",
+      "metadata": {
+        "description": "The name of the virtual network provisioned for the deployment"
+      }
+    },
+    "virtualNetworkRGName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource Group Name for Vnet. For new VNet leave it empty, otherwise type in existing resource group name"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "clouderasubnet",
+      "metadata": {
+        "description": "Subnet name for the virtual network where resources will be provisioned"
+      }
+    },
+    "addressPrefix": {
+      "type": "string",
+      "defaultValue": "10.3.0.0/16",
+      "metadata": {
+        "description": "Virtual Network address CIDR"
+      }
+    },
+    "subnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.3.0.0/16",
+      "metadata": {
+        "description": "CIDR for the subnet where VMs will be placed"
+      }
+    },
+    "clusterFirstIPAddress": {
+      "type": "string",
+      "defaultValue": "10.3.0.4",
+      "metadata": {
+        "description": "IP address for the first master"
+      }
+    },
+    "ipOffsetFromLastIP": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "IP address from the master node, for example if the first master is 10.1.1.1, then the first dataNode would be 10.1.1.11"
+      }
+    },
+    "numberOfDBNodes": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of DB nodes--one primary, rest replicas (defaults to 2)"
+      }
+    },
+    "dbVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS12",
+      "metadata": {
+        "description": "The size of the VMs deployed in the db cluster (defaults to Standard_DS12)"
+      }
+    },
+    "directorVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS12",
+      "metadata": {
+        "description": "The size of the VMs deployed in the db cluster (defaults to Standard_DS12)"
+      }
+    },
+    "company": {
+      "type": "string",
+      "defaultValue": "Company",
+      "metadata": {
+        "description": "Your Company"
+      }
+    },
+    "emailAddress": {
+      "type": "string",
+      "defaultValue": "email@yourcompany.com",
+      "metadata": {
+        "description": "your email"
+      }
+    },
+    "businessPhone": {
+      "type": "string",
+      "defaultValue": "123456789",
+      "metadata": {
+        "description": "your business phone number"
+      }
+    },
+    "firstName": {
+      "type": "string",
+      "defaultValue": "FirstName",
+      "metadata": {
+        "description": "Your FirstName"
+      }
+    },
+    "lastName": {
+      "type": "string",
+      "defaultValue": "LastName",
+      "metadata": {
+        "description": "Your LastName"
+      }
+    },
+    "jobRole": {
+      "type": "string",
+      "defaultValue": "Administrator",
+      "metadata": {
+        "description": "Job Role"
+      },
+      "allowedValues": [
+        "Administrator",
+        "Analyst (Industry/Finance)",
+        "Analyst (Technical)",
+        "Architect",
+        "C level",
+        "Consultant",
+        "Developer",
+        "Director",
+        "Engineer",
+        "Individual contributor",
+        "Manager",
+        "Partner",
+        "Student",
+        "VP"
+      ]
+    },
+    "jobFunction": {
+      "type": "string",
+      "defaultValue": "Analytics / Business Intelligence",
+      "metadata": {
+        "description": "Job Function"
+      },
+      "allowedValues": [
+        "Analytics / Business Intelligence",
+        "Big Data / Architecture",
+        "Data Warehouse / Management",
+        "Data Science",
+        "Database",
+        "ETL / ELT",
+        "Infrastructure",
+        "IT",
+        "Marketing / Sales",
+        "Networking",
+        "Manager",
+        "Security / Compliance",
+        "Storage"
+      ]
+    }
+  },
+  "variables": {
+    "templateAPIVersion":"2015-11-01",
+    "resourceAPIVersion":"2015-06-15",
+    "installCDH":"True",
+    "addressPrefix":"[parameters('addressPrefix')]",
+    "subnetPrefix":"[parameters('subnetPrefix')]",
+    "scriptsUri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/director/cloudera-on-centos",
+    "share-resourcesUri": "[concat(variables('scriptsUri'), '/shared-resources-existing-vnet.json')]",
+    "sa": "[parameters('clusterFirstIPAddress')]",
+    "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
+    "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
+    "dblbnodeIpOctet3": "[int(split(variables('sa'), '.')[3])]",
+    "dbnodeIpOctet3": "[add(add(int(variables('dblbnodeIpOctet3')), 1), parameters('ipOffsetFromLastIP'))]",
+    "ipOctet3": "[add(add(int(variables('dbnodeIpOctet3')), parameters('numberOfDBNodes')), parameters('ipOffsetFromLastIP'))]",
+    "storageAccount": {
+      "prefix": "[parameters('storageAccountPrefix')]",
+      "type": "[parameters('storageAccountType')]"
+    },
+    "clusterSpec": {
+    	"dbNodeCount": "[parameters('numberOfDBNodes')]"
+    },
+    "vmSpec": {
+      "directorVmSize": "[parameters('directorVmSize')]",
+      "adminUserName": "[parameters('adminUserName')]",
+      "adminPassword": "[parameters('adminPassword')]",
+      "dbPassword": "[parameters('dbPassword')]",
+      "masterASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
+      "dataASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]",
+      "utilityASName": "[concat(parameters('dnsNamePrefix'), '-utilAS')]"
+    },
+    "networkSpec": {
+      "addressPrefix": "[variables('addressPrefix')]",
+      "subnetPrefix": "[variables('subnetPrefix')]",
+      "ipOctet01": "[variables('ipOctet01')]",
+      "ipOctet2": "[variables('ipOctet2')]",
+      "ipOctet3": "[variables('ipOctet3')]",
+      "directorIP":"[variables('sa')]",
+      "dbIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('dbnodeIpOctet3'), 255)), '.', mod(variables('dbnodeIpOctet3'), 255))]",
+      "dblbIP":"[concat(variables('ipOctet01'), add(variables('ipOctet2'), div(variables('dblbnodeIpOctet3'), 255)), '.', mod(variables('dblbnodeIpOctet3'), 255))]",
+      "virtualNetworkName": "[parameters('virtualNetworkName')]",
+      "virtualNetworkRGName":"[parameters('virtualNetworkRGName')]",
+      "vnetNewOrExisting": "existing",
+      "virtualNetworkSubnetName": "[parameters('subnetName')]"
+    },
+    "VNetId": "[resourceId(parameters('virtualNetworkRGName'),concat('Microsoft.Network','/','virtualNetworks'),parameters('virtualNetworkName'))]"
+  },
+  "resources": [
+    {
+      "name": "shared-resources",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "[variables('templateAPIVersion')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('share-resourcesUri')]",
+          "contentVersion": "1.0.0.1"
+        },
+        "parameters": {
+          "resourceAPIVersion":{
+            "value":"[variables('resourceAPIVersion')]"
+          },
+          "networkSpec": {
+            "value": "[variables('networkSpec')]"
+          },
+          "masterASName": {
+            "value": "[variables('vmSpec').masterASName]"
+          },
+          "dataASName": {
+            "value": "[variables('vmSpec').dataASName]"
+          },
+          "utilityASName": {
+            "value": "[variables('vmSpec').utilityASName]"
+          }
+        }
+      }
+    },
+    {
+      "name": "mysql-cluster",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "[variables('templateAPIVersion')]",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/shared-resources"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/mysqlenabled/mysql-replication/azuredeploy.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "dnsName": {
+            "value": "[concat(parameters('dnsNamePrefix'),'-db')]"
+          },
+          "vmUserName": {
+            "value": "[variables('vmSpec').adminUserName]"
+          },
+          "vmPassword": {
+            "value": "[variables('vmSpec').adminPassword]"
+          },
+          "mysqlRootPassword": {
+            "value": "[variables('vmSpec').dbPassword]"
+          },
+          "mysqlReplicationPassword": {
+            "value": "[variables('vmSpec').dbPassword]"
+          },
+          "mysqlProbePassword": {
+            "value": "[variables('vmSpec').dbPassword]"
+          },
+          "vmSize": {
+            "value": "[variables('vmSpec').dbVmSize]"
+          },
+          "storageAccountType": {
+            "value": "[parameters('storageAccountType')]"
+          },
+          "virtualNetworkName": {
+            "value": "[variables('networkSpec').virtualNetworkName]"
+          },
+          "vnetNewOrExisting": {
+            "value": "[variables('networkSpec').vnetNewOrExisting]"
+          },
+          "virtualNetworkExistingRGName": {
+            "value": "[variables('networkSpec').virtualNetworkRGName]"
+          },
+          "dbSubnetName": {
+            "value": "[variables('networkSpec').virtualNetworkSubnetName]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[variables('networkSpec').addressPrefix]"
+          },
+          "dbSubnetAddressPrefix": {
+            "value": "[variables('networkSpec').subnetPrefix]"
+          },
+          "dbSubnetStartAddress": {
+            "value": "[variables('networkSpec').dbIP]"
+          },
+          "imagePublisher": {
+            "value": "OpenLogic"
+          },
+          "imageOffer": {
+            "value": "CentOS"
+          },
+          "imageSKU": {
+            "value": "6.6"
+          },
+          "mysqlFrontEndPort0": {
+            "value": 3306
+          },
+          "mysqlFrontEndPort1": {
+            "value": 3307
+          },
+          "sshNatRuleFrontEndPort0": {
+            "value": 64001
+          },
+          "sshNatRuleFrontEndPort1": {
+            "value": 64002
+          },
+          "mysqlProbePort0": {
+            "value": 9200
+          },
+          "mysqlProbePort1": {
+            "value": 9201
+          },
+          "artifactsPath": {
+            "value": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/director/mysql-replication"
+          },
+          "customScriptCommandToExecute": {
+            "value": "bash azuremysql.sh"
+          },
+          "dblbIP": {
+            "value": "[variables('networkSpec').dblbIP]"
+          }
+          
+        }
+      }
+    },
+    {
+      "name": "director-node",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "[variables('templateAPIVersion')]",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/shared-resources",
+        "Microsoft.Resources/deployments/mysql-cluster"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('scriptsUri'), '/master-node.json')]",
+          "contentVersion": "1.0.0.1"
+        },
+        "parameters": {
+          "vnetID":{
+            "value":"[variables('VNetId')]"
+          },
+          "resourceAPIVersion":{
+            "value":"[variables('resourceAPIVersion')]"
+          },
+          "dnsNamePrefix": {
+            "value": "[parameters('dnsNamePrefix')]"
+          },
+          "scriptsUri": {
+            "value": "[variables('scriptsUri')]"
+          },
+          "storageAccount": {
+            "value": "[variables('storageAccount')]"
+          },
+          "vmCount": {
+            "value": "[variables('clusterSpec').masterNodeCount]"
+          },
+          "vmSpec": {
+            "value": "[variables('vmSpec')]"
+          },
+          "networkSpec": {
+            "value": "[variables('networkSpec')]"
+          },
+          "clusterSpec": {
+            "value": "[variables('clusterSpec')]"
+          }
+        }
+      }
+    }
+  ]
+}
