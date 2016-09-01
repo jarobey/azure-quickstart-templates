@@ -297,7 +297,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('vmSpec').masterNodeASName)]"
         },
         "hardwareProfile": {
-          "vmSize": "[parameters('vmSpec').masterVmSize]"
+          "vmSize": "[parameters('vmSpec').directorVmSize]"
         },
         "osProfile": {
           "computerName": "[concat(variables('vmName'),copyIndex())]",
