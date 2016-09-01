@@ -411,7 +411,7 @@
             "value": "[variables('storageAccount')]"
           },
           "vmCount": {
-            "value": "[variables('clusterSpec').masterNodeCount]"
+            "value": "1"
           },
           "vmSpec": {
             "value": "[variables('vmSpec')]"
