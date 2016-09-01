@@ -290,7 +290,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/mysqlenabled/mysql-replication/azuredeploy.json",
+          "uri": "https://raw.githubusercontent.com/jarobey/azure-quickstart-templates/director/mysql-replication/azuredeploy.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -390,7 +390,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('scriptsUri'), '/master-node.json')]",
+          "uri": "[concat(variables('scriptsUri'), '/director-node.json')]",
           "contentVersion": "1.0.0.1"
         },
         "parameters": {
