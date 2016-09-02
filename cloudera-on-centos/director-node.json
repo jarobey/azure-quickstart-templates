@@ -34,6 +34,7 @@
     "directorIP":"[parameters('networkSpec').directorIP]",
     "vmName": "[concat(parameters('dnsNamePrefix'), '-dir')]",
     "nicName": "[concat(variables('vmName'), '-nic')]",
+    "ddnsZone": "[parameters('dnsNamePrefix'),'-cdh.internal']",
     "storageAccountName": "[concat('dir', parameters('storageAccount').prefix)]",
     "securityGroupName": "[concat(parameters('dnsNamePrefix'), '-dir-sg')]"
   },
@@ -372,6 +373,52 @@
             "enabled": "true",
             "storageUri": "[concat('http://', variables('storageAccountName'), copyIndex(),'.blob.core.windows.net')]"
           }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmName'), '0', '/setupLocalDDNS')]",
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), '0')]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "https://raw.githubusercontent.com/cloudera/director-scripts/master/azure-dns-scripts/bind-dns-setup.sh"
+          ],
+          "commandToExecute": "[concat('echo -e \"\n', variables('ddnsZone'), '\n\n\" | sh bind-dns-setup.sh >> /tmp/initialize-director.log 2>&1')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmName'), copyIndex(), '/installDirectorSoftware')]",
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nameNodeNicLoop",
+        "count": "[parameters('vmCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/extensions/', variables('vmName'), '0')]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[concat(parameters('scriptsUri'), '/scripts/install-director.sh')]"
+          ],
+          "commandToExecute": "sh install-director.sh  >> /tmp/initialize-director.log 2>&1"
         }
       }
     }
