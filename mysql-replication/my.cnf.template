@@ -10,22 +10,22 @@ datadir=/var/lib/mysql
 socket=/var/lib/mysql/mysql.sock
 
 # Disabling symbolic-links is recommended to prevent assorted security risks
-symbolic-links=0
+#symbolic-links=0
 
 # Recommended in standard MySQL setup
-sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+#sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
 
 
 #log_bin should be on a disk with enough free space. Replace '/var/lib/mysql/mysql_binary_log' with an appropriate path for your system
 #and chown the specified folder to the mysql user.
-log-bin=mysqld-bin
-log-slave-updates
-enforce-gtid-consistency
-gtid-mode=ON
-server_id=
-report-host=
-report-port=3306
-master-info-repository=TABLE
+#log-bin=mysqld-bin
+#log-slave-updates
+#enforce-gtid-consistency
+#gtid-mode=ON
+#server_id=
+#report-host=
+#report-port=3306
+#master-info-repository=TABLE
 
 key_buffer = 16M
 key_buffer_size = 32M
