@@ -396,31 +396,6 @@
           "commandToExecute": "[concat('echo -e \"\n', variables('ddnsZone'), '\n\n\" | sh bind-dns-setup.sh >> /tmp/initialize-director.log 2>&1')]"
         }
       }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "InstallDirectorSoftware",
-      "apiVersion": "[parameters('resourceAPIVersion')]",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "nameNodeNicLoop",
-        "count": "[parameters('vmCount')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/extensions/', variables('vmName'), '0')]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.OSTCExtensions",
-        "type": "CustomScriptForLinux",
-        "typeHandlerVersion": "1.4",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "fileUris": [
-            "[concat(parameters('scriptsUri'), '/scripts/install-director.sh')]"
-          ],
-          "commandToExecute": "sh install-director.sh  >> /tmp/initialize-director.log 2>&1"
-        }
-      }
     }
   ],
   "outputs": {
