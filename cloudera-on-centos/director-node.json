@@ -34,7 +34,7 @@
     "directorIP":"[parameters('networkSpec').directorIP]",
     "vmName": "[concat(parameters('dnsNamePrefix'), '-dir')]",
     "nicName": "[concat(variables('vmName'), '-nic')]",
-    "ddnsZone": "[parameters('dnsNamePrefix'),'-cdh.internal']",
+    "ddnsZone": "[concat(parameters('dnsNamePrefix'),'-cdh.internal')]",
     "storageAccountName": "[concat('dir', parameters('storageAccount').prefix)]",
     "securityGroupName": "[concat(parameters('dnsNamePrefix'), '-dir-sg')]"
   },
